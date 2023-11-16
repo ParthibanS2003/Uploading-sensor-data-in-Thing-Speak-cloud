@@ -61,10 +61,73 @@ Automatically act on your data and communicate using third-party services like T
 
 
 # PROGRAM:
+```
+/*
+Program to monitor the distance of the obstacle using an Ultrasonic sensor and uploading the data in the Thing speak using an ESP32 controller
+Developed by: Issac. J
+RegisterNumber:  212220040054
+*/
 
-# CIRCUIT DIAGRAM:
+#include "ThingSpeak.h"
+#include <WiFi.h>
 
-# OUTPUT:
+char ssid[] = "xxx"; //SSID
+char pass[] = "xxx"; // Password
+
+
+const int trigger = 25;
+const int echo = 26;
+long T;
+float distanceCM;
+WiFiClient  client;
+
+unsigned long myChannelField = xxxxxxx; // Channel ID
+const int ChannelField = 1; // Which channel to write data
+const char * myWriteAPIKey = "xxxxxxxxxxxxxx"; // Your write API Key
+
+void setup()
+{
+  Serial.begin(115200);
+  pinMode(trigger, OUTPUT);
+  pinMode(echo, INPUT);
+  WiFi.mode(WIFI_STA);
+  ThingSpeak.begin(client);
+}
+void loop()
+{
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.print("Attempting to connect to SSID: ");
+    Serial.println(ssid);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+      WiFi.begin(ssid, pass);
+      Serial.print(".");
+      delay(5000);
+    }
+    Serial.println("\nConnected.");
+  }
+  digitalWrite(trigger, LOW);
+  delay(1);
+  digitalWrite(trigger, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigger, LOW);
+  T = pulseIn(echo, HIGH);
+  distanceCM = T * 0.034;
+  distanceCM = distanceCM / 2;
+  Serial.print("Distance in cm: ");
+  Serial.println(distanceCM);
+  ThingSpeak.writeField(myChannelField, ChannelField, distanceCM, myWriteAPIKey);
+  delay(1000);
+}
+
+```
+
+# CIRCUIT DIAGRAM:  
+![image](https://github.com/Issac-art75/Uploading-sensor-data-in-Thing-Speak-cloud/assets/74670759/ba1a86a4-4cdb-4c62-9c38-b0e8b16d07fc)
+
+# OUTPUT:  
+![image](https://github.com/Issac-art75/Uploading-sensor-data-in-Thing-Speak-cloud/assets/74670759/53dcd721-6da7-4736-8d43-76ab295127f1)
 
 # RESULT:
 Thus the distance of the obstacle was monitored using Ultrasonic sensor and the distance values are uploaded in the Thing speak using ESP32 controller.
